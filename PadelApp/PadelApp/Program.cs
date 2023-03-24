@@ -6,6 +6,8 @@ using PadelApp.Model;
 using PaldeApp;
 using Refit;
 using SQLite;
+using System.Net.Sockets;
+using System.Net;
 using System.Reflection;
 
 namespace PadelApp
@@ -33,7 +35,7 @@ namespace PadelApp
             builder.Services.AddSingleton<GameRepository>(new GameRepository(con));
             builder.Services.AddSingleton<SQLiteAsyncConnection>(con);
 
-            IGameAPI gameAPI = RestService.For<IGameAPI>(new HttpClient() { BaseAddress = new Uri("http://localhost:5252/games") });
+            IGameAPI gameAPI = RestService.For<IGameAPI>(new HttpClient() { BaseAddress = new Uri("https://padelpoints.azurewebsites.net/games") });
             builder.Services.AddSingleton<IGameAPI>(gameAPI);
 
             // Swagger
