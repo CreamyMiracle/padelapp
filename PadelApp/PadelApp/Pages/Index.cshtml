@@ -41,8 +41,14 @@
     }
 
     button {
-        margin-left: 10px;
-        margin-right: 10px;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    .redbutton {
+        margin-left: 5px;
+        margin-right: 5px;
+        background-color: lightcoral
     }
 
     /* Adjust form styles */
@@ -82,16 +88,8 @@
 
 <header>
     <div class="header-inputs">
-        <form asp-page-handler="OpenGame" method="post" class="add-row-form">
-            <input type="text" placeholder="ID" asp-for="OpenGameName" />
-            <button>Open</button>
-        </form>
-    </div>
-    <div class="header-inputs">
-        <form asp-page-handler="NewGame" method="post" class="add-row-form">
-            <input type="text" placeholder="ID" asp-for="NewGameName" />
-            <button>New</button>
-        </form>
+        <input id="gameIdInput" type="text" placeholder="ID" />
+        <button type="button" onclick="openGame()">Open</button>
     </div>
 </header>
 
@@ -101,6 +99,7 @@
             <tr>
                 <th>Name</th>
                 <th>Points</th>
+                <th></th>
                 <th></th>
             </tr>
         </thead>
@@ -116,14 +115,15 @@
                         <button type="button" onclick="incrementPoints('@row.Name')">+</button>
                         <button type="button" onclick="decrementPoints('@row.Name')">-</button>
                     </td>
+                    <td>
+                        <button type="button" class="redbutton" onclick="deleteRow('@row.Name')">Delete</button>
+                    </td>
                 </tr>
             }
             <tr>
-                <td colspan="3">
-                    <form asp-page-handler="AddRow" method="post" class="add-row-form">
-                        <input type="text" placeholder="Name" asp-for="NewItemName" />
-                        <button>Add Player</button>
-                    </form>
+                <td colspan="4">
+                    <input id="nameInput" type="text" placeholder="Name"/>
+                    <button type="button" onclick="addRow()">Add Player</button>
                 </td>
             </tr>
         </tbody>
@@ -136,6 +136,21 @@
     <script>
         function updateRow(name, points) {
             fetch(`/Index?handler=updateRow&name=${name}&points=${points}`)
+                .then(() => window.location.reload());
+        }
+
+        function addRow(){
+            fetch(`/Index?handler=addRow&name=${document.getElementById("nameInput").value}`)
+                .then(() => window.location.reload());
+        }
+
+        function openGame() {
+            fetch(`/Index?handler=openGame&gameId=${document.getElementById("gameIdInput").value}`)
+                .then(() => window.location.reload());
+        }
+
+        function deleteRow(name) {
+            fetch(`/Index?handler=deleteRow&name=${name}`)
                 .then(() => window.location.reload());
         }
 

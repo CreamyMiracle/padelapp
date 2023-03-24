@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PadelApp.Controller;
 using PadelApp.Model;
 using PadelApp.Model.Dto;
 using PaldeApp;
@@ -15,12 +16,6 @@ public class IndexModel : PageModel
     }
 
     [BindProperty]
-    public string NewItemName { get; set; }
-
-    [BindProperty]
-    public string NewGameName { get; set; }
-
-    [BindProperty]
     public string OpenGameName { get; set; }
 
     public List<TableRow> Rows { get; set; } = new List<TableRow>();
@@ -33,34 +28,43 @@ public class IndexModel : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostOpenGame()
+    public async Task<IActionResult> OnGetOpenGame(string gameId)
     {
-        await GetGame(OpenGameName);
+        await GetGame(gameId);
+        if (Game == null)
+        {
+            await NewGame(gameId);
+        }
+
         return Page();
     }
 
-    public async Task<IActionResult> OnPostNewGame()
+    public async Task<IActionResult> OnGetAddRow(string name)
     {
-        await NewGame(NewGameName);
-        await GetGame();
-        return Page();
-    }
-
-    public async Task<IActionResult> OnPostAddRow()
-    {   
         await GetGame();
         if (Game == null)
         {
             await NewGame(DateTime.UtcNow.ToString("dd-MM-yyyy"));
         }
 
-        Game?.PlayerPoints.TryAdd(NewItemName, 0);
+        Game?.PlayerPoints.TryAdd(name, 0);
 
-        var res = await _gameAPI.UpdateGame(Game);
-        Game = res.Content;
+        Game = (await _gameAPI.UpdateGame(Game)).Content;
 
+        UpdateRows();
+
+        return Page();
+    }
+
+    public async Task<IActionResult> OnGetDeleteRow(string name)
+    {
         await GetGame();
 
+        Game?.PlayerPoints.Remove(name);
+
+        Game = (await _gameAPI.UpdateGame(Game)).Content;
+
+        UpdateRows();
         return Page();
     }
 
@@ -112,7 +116,7 @@ public class IndexModel : PageModel
     private async Task NewGame(string gameId)
     {
         Game = new GameDto() { Id = gameId };
-        var res = await _gameAPI.UpdateGame(Game);
+        Game = (await _gameAPI.UpdateGame(Game)).Content;
     }
 
     private async Task UpdateGame()
@@ -122,32 +126,24 @@ public class IndexModel : PageModel
         {
             Game?.PlayerPoints.TryAdd(item.Name, item.Points);
         }
-        var res = await _gameAPI.UpdateGame(Game);
+        Game = (await _gameAPI.UpdateGame(Game)).Content;
     }
 
     private async Task GetGame()
     {
-        var res = await _gameAPI.GetGame();
-        Game = res.Content;
-
-        Rows.Clear();
-
-        if (Game != null)
-        {
-            foreach (KeyValuePair<string, int> pair in Game?.PlayerPoints)
-            {
-                Rows.Add(new TableRow { Name = pair.Key, Points = pair.Value });
-            }
-        }
+        Game = (await _gameAPI.GetGame()).Content;
+        UpdateRows();
     }
 
     private async Task GetGame(string gameId)
     {
-        var res = await _gameAPI.GetGame(gameId);
-        Game = res.Content;
+        Game = (await _gameAPI.GetGame(gameId)).Content;
+        UpdateRows();
+    }
 
+    private void UpdateRows()
+    {
         Rows.Clear();
-
         if (Game != null)
         {
             foreach (KeyValuePair<string, int> pair in Game?.PlayerPoints)

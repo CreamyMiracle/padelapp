@@ -17,6 +17,11 @@ namespace PadelApp.Model.Dto
 
         public GameDto(Game game)
         {
+            if (game == null)
+            {
+                return;
+            }
+
             Id = game.Id;
             if (game.PlayerPointsSerialized != null) 
             { 

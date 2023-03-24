@@ -12,7 +12,7 @@ namespace PadelApp.Controller
     public class GamesController : ControllerBase
     {
         private readonly ILogger<GamesController> _logger;
-        private GameRepository _gameRepository;
+        private readonly GameRepository _gameRepository;
 
         public GamesController(ILogger<GamesController> logger, GameRepository gameRepository)
         {
@@ -35,11 +35,12 @@ namespace PadelApp.Controller
         [HttpGet("{gameId}")]
         public async Task<ActionResult<GameDto>> GetGame(string gameId)
         {
+            ControllerContext.HttpContext.Response.Cookies.Append("currentGameId", gameId);
+
             Game? game = await _gameRepository.GetGame(gameId);
 
             if (game == null) { return NotFound(string.Format("Game with ID '{0}' not found", gameId)); }
-
-            ControllerContext.HttpContext.Response.Cookies.Append("currentGameId", gameId);
+         
             return new GameDto(game);
         }
 
