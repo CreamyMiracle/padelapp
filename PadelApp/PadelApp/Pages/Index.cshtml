@@ -1,0 +1,152 @@
+﻿@page
+@model IndexModel
+
+<h1>Padel Points</h1>
+
+<style>
+    /* Make the table responsive */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid #ddd;
+        margin-bottom: 15px;
+    }
+
+    /* Adjust table styles */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+
+    /* Adjust input and button styles */
+    input[type="number"], input[type="text"], button {
+        width: 100%;
+        max-width: 100px;
+        padding: 8px;
+        margin: 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    button {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    /* Adjust form styles */
+    .add-row-form {
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+    }
+
+        .add-row-form input[type="text"], .add-row-form button {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+        }
+
+    /* Adjust header styles */
+    header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+
+    .header-inputs {
+        display: flex;
+        align-items: center;
+        margin-right: 15px;
+    }
+
+        .header-inputs input[type="text"], .header-inputs button {
+            margin: 0;
+            max-width: 70px;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+</style>
+
+<header>
+    <div class="header-inputs">
+        <form asp-page-handler="OpenGame" method="post" class="add-row-form">
+            <input type="text" placeholder="ID" asp-for="OpenGameName" />
+            <button>Open</button>
+        </form>
+    </div>
+    <div class="header-inputs">
+        <form asp-page-handler="NewGame" method="post" class="add-row-form">
+            <input type="text" placeholder="ID" asp-for="NewGameName" />
+            <button>New</button>
+        </form>
+    </div>
+</header>
+
+<div class="table-responsive">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Points</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in Model.Rows)
+            {
+                <tr>
+                    <td>@row.Name</td>
+                    <td>
+                        <input type="number" value="@row.Points" onchange="updateRow('@row.Name', this.value)" />
+                    </td>
+                    <td>
+                        <button type="button" onclick="incrementPoints('@row.Name')">+</button>
+                        <button type="button" onclick="decrementPoints('@row.Name')">-</button>
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td colspan="3">
+                    <form asp-page-handler="AddRow" method="post" class="add-row-form">
+                        <input type="text" placeholder="Name" asp-for="NewItemName" />
+                        <button>Add Player</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        function updateRow(name, points) {
+            fetch(`/Index?handler=updateRow&name=${name}&points=${points}`)
+                .then(() => window.location.reload());
+        }
+
+        function incrementPoints(name) {
+            fetch(`/Index?handler=incrementPoints&name=${name}`)
+                .then(() => window.location.reload());
+        }
+
+        function decrementPoints(name) {
+            fetch(`/Index?handler=decrementPoints&name=${name}`)
+                .then(() => window.location.reload());
+        }
+    </script>
+}
