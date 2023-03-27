@@ -1,5 +1,6 @@
 ﻿using PadelApp.Model;
 using SQLite;
+using SQLiteNetExtensionsAsync.Extensions;
 
 namespace PadelApp.Data
 {
@@ -26,12 +27,14 @@ namespace PadelApp.Data
 
         public async Task<Game?> AddGame(Game game)
         {
-            return await db_con.InsertAsync(game) == 1 ? game : null;
+            await db_con.InsertWithChildrenAsync(game);
+            return game;
         }
 
         public async Task<Game?> UpdateGame(Game game)
         {
-            return await db_con.UpdateAsync(game) == 1 ? game : null;
+            await db_con.UpdateWithChildrenAsync(game);
+            return game;
         }
     }
 }

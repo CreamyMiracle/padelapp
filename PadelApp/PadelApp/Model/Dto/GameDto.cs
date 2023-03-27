@@ -10,27 +10,10 @@ namespace PadelApp.Model.Dto
 {
     public class GameDto
     {
-        public GameDto()
-        {
-
-        }
-
-        public GameDto(Game game)
-        {
-            if (game == null)
-            {
-                return;
-            }
-
-            Id = game.Id;
-            if (game.PlayerPointsSerialized != null) 
-            { 
-                this.PlayerPoints = JsonConvert.DeserializeObject<Dictionary<string, int>>(game.PlayerPointsSerialized);
-            }
-        }
-
+        // Id of this game
         public string Id { get; set; } = null!;
 
-        public Dictionary<string, int> PlayerPoints { get; set; } = new Dictionary<string, int>();
+        // player name as key, points per each set as value
+        public Dictionary<string, List<int>> Sets { get; set; } = new Dictionary<string, List<int>>();
     }
 }

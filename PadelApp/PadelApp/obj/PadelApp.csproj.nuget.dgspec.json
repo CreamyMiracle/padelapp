@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "F:\\Dev\\padelapp\\PadelApp\\PadelApp\\PadelApp.csproj": {}
+    "F:\\Dev\\padelappnew\\PadelApp\\PadelApp\\PadelApp.csproj": {}
   },
   "projects": {
-    "F:\\Dev\\padelapp\\PadelApp\\PadelApp\\PadelApp.csproj": {
+    "F:\\Dev\\padelappnew\\PadelApp\\PadelApp\\PadelApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\Dev\\padelapp\\PadelApp\\PadelApp\\PadelApp.csproj",
+        "projectUniqueName": "F:\\Dev\\padelappnew\\PadelApp\\PadelApp\\PadelApp.csproj",
         "projectName": "PadelApp",
-        "projectPath": "F:\\Dev\\padelapp\\PadelApp\\PadelApp\\PadelApp.csproj",
+        "projectPath": "F:\\Dev\\padelappnew\\PadelApp\\PadelApp\\PadelApp.csproj",
         "packagesPath": "C:\\Users\\Rajala\\.nuget\\packages\\",
-        "outputPath": "F:\\Dev\\padelapp\\PadelApp\\PadelApp\\obj\\",
+        "outputPath": "F:\\Dev\\padelappnew\\PadelApp\\PadelApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -21,14 +21,14 @@
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net6.0"
+          "net7.0"
         ],
         "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net6.0": {
-            "targetAlias": "net6.0",
+          "net7.0": {
+            "targetAlias": "net7.0",
             "projectReferences": {}
           }
         },
@@ -39,12 +39,20 @@
         }
       },
       "frameworks": {
-        "net6.0": {
-          "targetAlias": "net6.0",
+        "net7.0": {
+          "targetAlias": "net7.0",
           "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
             "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
               "target": "Package",
               "version": "[1.17.0, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
             },
             "Refit": {
               "target": "Package",
@@ -53,10 +61,6 @@
             "SQLiteNetExtensions.Async": {
               "target": "Package",
               "version": "[2.1.0, )"
-            },
-            "Swashbuckle.AspNetCore": {
-              "target": "Package",
-              "version": "[6.5.0, )"
             },
             "sqlite-net-pcl": {
               "target": "Package",

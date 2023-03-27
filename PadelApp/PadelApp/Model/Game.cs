@@ -11,26 +11,14 @@ namespace PadelApp.Model
 {
     public class Game
     {
-        public Game()
-        {
-
-        }
-
-        public Game(GameDto dto)
-        {
-            Id = dto.Id;
-            if (dto.PlayerPoints != null) 
-            { 
-                this.PlayerPointsSerialized = JsonConvert.SerializeObject(dto.PlayerPoints); 
-            }
-        }
-
         [PrimaryKey]
+        // Id of this game
         public string Id { get; set; } = null!;
 
-        [Ignore]
-        public Dictionary<string, int> PlayerPoints { get; set; } = new Dictionary<string, int>();
-    
-        public string PlayerPointsSerialized { get; set; }
+        // player name as key, points per each set as value
+        [TextBlob("SetsBlobbed")]
+        public Dictionary<string, List<int>> Sets { get; set; } = new Dictionary<string, List<int>>();
+
+        public string SetsBlobbed { get; set; }
     }
 }

@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "Hash": "MsH6j79ff9/IFcmnjDi0ieb/IUslaIiLqJDX32czPhg=",
+  "Source": "PadelApp",
+  "BasePath": "_content/PadelApp",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "PadelApp\\wwwroot",
+      "Source": "PadelApp",
+      "ContentRoot": "F:\\Dev\\padelappnew\\PadelApp\\PadelApp\\wwwroot\\",
+      "BasePath": "_content/PadelApp",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "F:\\Dev\\padelappnew\\PadelApp\\PadelApp\\wwwroot\\css\\site.css",
+      "SourceId": "PadelApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "F:\\Dev\\padelappnew\\PadelApp\\PadelApp\\wwwroot\\",
+      "BasePath": "_content/PadelApp",
+      "RelativePath": "css/site.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\site.css"
+    }
+  ]
+}
