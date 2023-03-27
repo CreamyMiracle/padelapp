@@ -6,8 +6,6 @@
 
 <h1>Game Table</h1>
 
-<h1>Game Table</h1>
-
 <div>
     <input type="text" placeholder="Game" @bind-value="openGameId" />
     <button @onclick="OpenGame">Open</button>
@@ -27,8 +25,6 @@
         <tbody>
             @foreach (var currGame in game.Games)
             {
-                bool drawn1 = false;
-                bool drawn2 = false;
                 <tr onclick="@(() => ToggleRow(currGame.Key))">
                     <td>@currGame.Key</td>
                     <td>@currGame.Value.SkipLast(1).Sum()</td>
@@ -36,51 +32,9 @@
                         <input @onclick:stopPropagation="true" @onclick:preventDefault="true" type="number" value="@game.Games[currGame.Key].Last()" @onchange="@((e) => CurrSetChanged(currGame.Key, int.Parse(e.Value.ToString())))" />
                     </td>
                     <td>
-                        @foreach (var oldGame in game.Games)
-                        {
-                            int currZeros = game.Games.Values.MaxBy(list => list.Count).Count - currGame.Value.SkipLast(1).Count() - 1;
-                            List<int> currGameHistory = new List<int>(new int[currZeros]).Concat(currGame.Value.SkipLast(1)).ToList();
-                            List<KeyValuePair<bool, string>> boldPoints = new List<KeyValuePair<bool, string>>();
-                            bool draw = false;
-
-                            if (game.Games.Count == 1)
-                            {
-                                draw = true;
-                                foreach (int point in currGameHistory)
-                                {
-                                    boldPoints.Add(new KeyValuePair<bool, string>(true, point.ToString()));
-                                }
-                            }
-                            else if (oldGame.Key != currGame.Key)
-                            {
-                                draw = true;
-                                int otherZeros = game.Games.Values.MaxBy(list => list.Count).Count - oldGame.Value.SkipLast(1).Count() - 1;
-                                List<int> otherGamehistory = new List<int>(new int[otherZeros]).Concat(oldGame.Value.SkipLast(1)).ToList();
-
-                                for (int i = 0; i < currGameHistory.Count; i++)
-                                {
-                                    int currG = currGameHistory[i];
-                                    int otherG = otherGamehistory[i];
-
-                                    if (currG >= otherG)
-                                    {
-                                        boldPoints.Add(new KeyValuePair<bool, string>(true, currG.ToString()));
-                                    }
-                                    else
-                                    {
-                                        boldPoints.Add(new KeyValuePair<bool, string>(false, currG.ToString()));
-                                    }
-                                }
-                            }
-
-                            if (draw && !drawn1)
-                            {
-                                drawn1 = true;
-                                <label>
-                                    @boldPoints.Where(pair => pair.Key).Count().ToString()
-                                </label>
-                            }
-                        }
+                        <label>
+                            @WinCount(currGame.Key)
+                        </label>
                     </td>
                     <td>
                         <button @onclick:stopPropagation="true" @onclick:preventDefault="true" @onclick="@(() => IncrementCurrValue(currGame.Key))">+</button>
@@ -91,77 +45,40 @@
                 {
                     <tr>
                         <td colspan="4">
-                            @foreach (var oldGame in game.Games)
+                            @if (true)
                             {
-                                int currZeros = game.Games.Values.MaxBy(list => list.Count).Count - currGame.Value.SkipLast(1).Count() - 1;
-                                List<int> currGameHistory = new List<int>(new int[currZeros]).Concat(currGame.Value.SkipLast(1)).ToList();
-                                List<KeyValuePair<bool, string>> boldPoints = new List<KeyValuePair<bool, string>>();
-                                bool draw = false;
+                                List<KeyValuePair<bool, int>> boldPoints = CapsGames(currGame.Key);
 
-                                if (game.Games.Count == 1)
+                                <label>
+                                    Games:
+                                </label>
+
+                                string separator = "";
+                                for (int i = 0; i < boldPoints.Count; i++)
                                 {
-                                    draw = true;
-                                    foreach (int point in currGameHistory)
+                                    KeyValuePair<bool, int> point = boldPoints[i];
+                                    separator = " | ";
+                                    if (i + 1 == boldPoints.Count)
                                     {
-                                        boldPoints.Add(new KeyValuePair<bool, string>(true, point.ToString()));
+                                        separator = "";
                                     }
-                                }
-                                else if (oldGame.Key != currGame.Key)
-                                {
-                                    draw = true;
-                                    int otherZeros = game.Games.Values.MaxBy(list => list.Count).Count - oldGame.Value.SkipLast(1).Count() - 1;
-                                    List<int> otherGamehistory = new List<int>(new int[otherZeros]).Concat(oldGame.Value.SkipLast(1)).ToList();
 
-                                    for (int i = 0; i < currGameHistory.Count; i++)
+                                    if (point.Key)
                                     {
-                                        int currG = currGameHistory[i];
-                                        int otherG = otherGamehistory[i];
-
-                                        if (currG >= otherG)
-                                        {
-                                            boldPoints.Add(new KeyValuePair<bool, string>(true, currG.ToString()));
-                                        }
-                                        else
-                                        {
-                                            boldPoints.Add(new KeyValuePair<bool, string>(false, currG.ToString()));
-                                        }
-                                    }
-                                }
-
-                                if (draw && !drawn2)
-                                {
-                                    drawn2 = true;
-                                    <label>
-                                        Games:
-                                    </label>
-
-                                    string separator = "";
-                                    for (int i = 0; i < boldPoints.Count; i++)
-                                    {
-                                        KeyValuePair<bool, string> point = boldPoints[i];
-                                        separator = " | ";
-                                        if (i + 1 == currGameHistory.Count)
-                                        {
-                                            separator = "";
-                                        }
-
-                                        if (point.Key)
-                                        {
-                                            <label style="font-weight:bold">
-                                                @point.Value
-                                            </label>
-                                        }
-                                        else
-                                        {
-                                            <label>
-                                                @point.Value
-                                            </label>
-                                        }
-
-                                        <label>
-                                            @separator
+                                        <label style="font-weight:bold">
+                                            @point.Value
                                         </label>
                                     }
+                                    else
+                                    {
+                                        <label>
+                                            @point.Value
+                                        </label>
+                                    }
+
+                                    <label>
+                                        @separator
+                                    </label>
                                 }
                             }
                         </td>
@@ -278,6 +195,57 @@
         }
     }
 
+    private List<KeyValuePair<bool, int>> CapsGames(string playerName)
+    {
+        KeyValuePair<string, List<int>> currGame = game.Games.Where(kv => kv.Key == playerName).FirstOrDefault();
+        List<KeyValuePair<bool, int>> boldPoints = new List<KeyValuePair<bool, int>>();
+
+        List<List<int>> normalizedGames = new List<List<int>>();
+        List<int> currNormalizedGames = new List<int>();
+
+        foreach (var oldGame in game.Games)
+        {
+            int currZeros = game.Games.Values.MaxBy(list => list.Count).Count - oldGame.Value.SkipLast(1).Count() - 1;
+            List<int> currGameHistory = new List<int>(new int[currZeros]).Concat(oldGame.Value.SkipLast(1)).ToList();
+
+            if (oldGame.Key == playerName)
+            {
+                currNormalizedGames = new List<int>(currGameHistory);
+                continue;
+            }
+            normalizedGames.Add(new List<int>(currGameHistory));
+        }
+
+
+        for (int i = 0; i < currNormalizedGames.Count; i++)
+        {
+            int currPoint = currNormalizedGames[i];
+            bool highest = true;
+
+            foreach (List<int> otherPoints in normalizedGames)
+            {
+                if (normalizedGames.Count == 0 || otherPoints.Count == 0)
+                {
+                    continue;
+                }
+                int otherPoint = otherPoints[i];
+                if (otherPoint > currPoint)
+                {
+                    highest = false;
+                }
+            }
+
+            boldPoints.Add(new KeyValuePair<bool, int>(highest, currPoint));
+        }
+
+        return boldPoints;
+    }
+
+    private int WinCount(string playerName)
+    {
+        return CapsGames(playerName).Where(kv => kv.Key).Count();
+    }
+
     private async void OpenGame()
     {
         if (!string.IsNullOrEmpty(openGameId))
@@ -341,7 +309,8 @@
     {
         if (!string.IsNullOrEmpty(newPlayerName))
         {
-            game.Games[newPlayerName] = new List<int>() { 0 };
+            game.Games[newPlayerName] = new List<int>
+    () { 0 };
             newPlayerName = "";
         }
 
