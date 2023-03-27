@@ -10,29 +10,29 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = PadelApp
 build_property.RootNamespace = PadelApp
-build_property.ProjectDir = F:\Dev\padelappnew\PadelApp\PadelApp\
+build_property.ProjectDir = D:\Dev\padelapp\PadelApp\PadelApp\
 build_property.RazorLangVersion = 7.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = F:\Dev\padelappnew\PadelApp\PadelApp
+build_property.MSBuildProjectDirectory = D:\Dev\padelapp\PadelApp\PadelApp
 build_property._RazorSourceGeneratorDebug = 
 
-[F:/Dev/padelappnew/PadelApp/PadelApp/App.razor]
+[D:/Dev/padelapp/PadelApp/PadelApp/App.razor]
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/Dev/padelappnew/PadelApp/PadelApp/MainLayout.razor]
+[D:/Dev/padelapp/PadelApp/PadelApp/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = TWFpbkxheW91dC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/Dev/padelappnew/PadelApp/PadelApp/Pages/Index.razor]
+[D:/Dev/padelapp/PadelApp/PadelApp/Pages/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/Dev/padelappnew/PadelApp/PadelApp/_Imports.razor]
+[D:/Dev/padelapp/PadelApp/PadelApp/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/Dev/padelappnew/PadelApp/PadelApp/Pages/_Host.cshtml]
+[D:/Dev/padelapp/PadelApp/PadelApp/Pages/_Host.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0hvc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 

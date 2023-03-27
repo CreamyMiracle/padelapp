@@ -13,11 +13,11 @@ namespace PadelApp.Data
             db_con = con;
         }
 
-        public async Task<Game?> GetGame(string gameId)
+        public async Task<Session?> GetGame(string gameId)
         {
             try
             {
-                return await db_con.GetAsync<Game>(gameId);
+                return await db_con.GetWithChildrenAsync<Session>(gameId);
             }
             catch (InvalidOperationException)
             {
@@ -25,13 +25,13 @@ namespace PadelApp.Data
             }
         }
 
-        public async Task<Game?> AddGame(Game game)
+        public async Task<Session?> AddGame(Session game)
         {
             await db_con.InsertWithChildrenAsync(game);
             return game;
         }
 
-        public async Task<Game?> UpdateGame(Game game)
+        public async Task<Session?> UpdateGame(Session game)
         {
             await db_con.UpdateWithChildrenAsync(game);
             return game;

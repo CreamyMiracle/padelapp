@@ -11,12 +11,12 @@ namespace PaldeApp
     public interface IGameAPI
     {
         [Get("/")]
-        Task<ApiResponse<GameDto>> GetGame();
+        Task<ApiResponse<SessionDto>> GetGame();
 
         [Get("/{gameId}")]
-        Task<ApiResponse<GameDto>> GetGame(string gameId);
+        Task<ApiResponse<SessionDto>> GetGame(string gameId);
 
         [Put("/")]
-        Task<ApiResponse<GameDto>> UpdateGame(GameDto game);
+        Task<ApiResponse<SessionDto>> UpdateGame(SessionDto game);
     }
 }

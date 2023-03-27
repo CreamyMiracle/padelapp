@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace PadelApp.Model.Dto
 {
-    public class GameDto
+    public class SessionDto
     {
         // Id of this game
         public string Id { get; set; } = null!;
 
-        // player name as key, points per each set as value
-        public Dictionary<string, List<int>> Sets { get; set; } = new Dictionary<string, List<int>>();
+        // player name as key, points per each game as value
+        public Dictionary<string, List<int>> Games { get; set; } = new Dictionary<string, List<int>>();
     }
 }

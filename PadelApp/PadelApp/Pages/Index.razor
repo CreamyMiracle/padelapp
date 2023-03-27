@@ -2,139 +2,298 @@
 @inject IGameAPI GameClient
 @using PadelApp.Model.Dto
 @using PaldeApp;
+@using System.Net;
 
-<h1 class="game-table-heading">Game Table</h1>
+<h1>Game Table</h1>
 
-<table class="game-table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Total points</th>
-            <th>Points</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var set in game.Sets)
-        {
-            <tr class="game-table-row" onclick="@(() => ToggleRow(set.Key))">
-                <td>@set.Key</td>
-                <td class="game-table-total-points">
-                    <label> @set.Value.SkipLast(1).Sum() </label>
-                </td>
-                <td class="game-table-points">
-                    <input @onclick:stopPropagation="true" @onclick:preventDefault="true" type="number" value="@game.Sets[set.Key].Last()" @onchange="@((e) => CurrSetChanged(set.Key, int.Parse(e.Value.ToString())))" />
-                </td>
-                <td class="game-table-button" @onclick:stopPropagation="true" @onclick:preventDefault="true">
-                    <button class="game-table-button-add" @onclick="@(() => IncrementCurrValue(set.Key))">+</button>
-                    <button class="game-table-button-subtract" @onclick="@(() => DecrementCurrValue(set.Key))">-</button>
-                </td>
-            </tr>
-            @if (expandedRows.Contains(set.Key))
-            {
-                <tr class="game-table-row">
-                    <td colspan="4">
-                        Sets: @string.Join(", ", set.Value.SkipLast(1))
-                    </td>
-                </tr>
-            }
-        }
-        <tr class="game-table-row">
-            <td>Summary</td>
-            <td class="game-table-total-points">
-                <label> @game.Sets.Values.Select(list => list.SkipLast(1).Sum()).Sum() </label>
-            </td>
-            <td class="game-table-points">
-                <label> @game.Sets.Values.Select(list => list.Last()).Sum() </label>
-            </td>
-            <td class="game-table-button" colspan="2"></td>
-        </tr>
-    </tbody>
-</table>
+<h1>Game Table</h1>
 
-<div class="game-table-controls">
-    <input type="text" class="game-table-input" placeholder="Name" @bind-value="newPlayerName" />
-    <button class="game-table-button" @onclick="AddNewRow">Add Row</button>
-    <button class="game-table-button" @onclick="EndSet">End set</button>
+<div>
+    <input type="text" placeholder="Game" @bind-value="openGameId" />
+    <button @onclick="OpenGame">Open</button>
 </div>
 
+<div>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Total points</th>
+                <th>Points</th>
+                <th>Wins</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var currGame in game.Games)
+            {
+                bool drawn1 = false;
+                bool drawn2 = false;
+                <tr onclick="@(() => ToggleRow(currGame.Key))">
+                    <td>@currGame.Key</td>
+                    <td>@currGame.Value.SkipLast(1).Sum()</td>
+                    <td>
+                        <input @onclick:stopPropagation="true" @onclick:preventDefault="true" type="number" value="@game.Games[currGame.Key].Last()" @onchange="@((e) => CurrSetChanged(currGame.Key, int.Parse(e.Value.ToString())))" />
+                    </td>
+                    <td>
+                        @foreach (var oldGame in game.Games)
+                        {
+                            int currZeros = game.Games.Values.MaxBy(list => list.Count).Count - currGame.Value.SkipLast(1).Count() - 1;
+                            List<int> currGameHistory = new List<int>(new int[currZeros]).Concat(currGame.Value.SkipLast(1)).ToList();
+                            List<KeyValuePair<bool, string>> boldPoints = new List<KeyValuePair<bool, string>>();
+                            bool draw = false;
+
+                            if (game.Games.Count == 1)
+                            {
+                                draw = true;
+                                foreach (int point in currGameHistory)
+                                {
+                                    boldPoints.Add(new KeyValuePair<bool, string>(true, point.ToString()));
+                                }
+                            }
+                            else if (oldGame.Key != currGame.Key)
+                            {
+                                draw = true;
+                                int otherZeros = game.Games.Values.MaxBy(list => list.Count).Count - oldGame.Value.SkipLast(1).Count() - 1;
+                                List<int> otherGamehistory = new List<int>(new int[otherZeros]).Concat(oldGame.Value.SkipLast(1)).ToList();
+
+                                for (int i = 0; i < currGameHistory.Count; i++)
+                                {
+                                    int currG = currGameHistory[i];
+                                    int otherG = otherGamehistory[i];
+
+                                    if (currG >= otherG)
+                                    {
+                                        boldPoints.Add(new KeyValuePair<bool, string>(true, currG.ToString()));
+                                    }
+                                    else
+                                    {
+                                        boldPoints.Add(new KeyValuePair<bool, string>(false, currG.ToString()));
+                                    }
+                                }
+                            }
+
+                            if (draw && !drawn1)
+                            {
+                                drawn1 = true;
+                                <label>
+                                    @boldPoints.Where(pair => pair.Key).Count().ToString()
+                                </label>
+                            }
+                        }
+                    </td>
+                    <td>
+                        <button @onclick:stopPropagation="true" @onclick:preventDefault="true" @onclick="@(() => IncrementCurrValue(currGame.Key))">+</button>
+                        <button @onclick:stopPropagation="true" @onclick:preventDefault="true" @onclick="@(() => DecrementCurrValue(currGame.Key))">-</button>
+                    </td>
+                </tr>
+                @if (expandedRows.Contains(currGame.Key))
+                {
+                    <tr>
+                        <td colspan="4">
+                            @foreach (var oldGame in game.Games)
+                            {
+                                int currZeros = game.Games.Values.MaxBy(list => list.Count).Count - currGame.Value.SkipLast(1).Count() - 1;
+                                List<int> currGameHistory = new List<int>(new int[currZeros]).Concat(currGame.Value.SkipLast(1)).ToList();
+                                List<KeyValuePair<bool, string>> boldPoints = new List<KeyValuePair<bool, string>>();
+                                bool draw = false;
+
+                                if (game.Games.Count == 1)
+                                {
+                                    draw = true;
+                                    foreach (int point in currGameHistory)
+                                    {
+                                        boldPoints.Add(new KeyValuePair<bool, string>(true, point.ToString()));
+                                    }
+                                }
+                                else if (oldGame.Key != currGame.Key)
+                                {
+                                    draw = true;
+                                    int otherZeros = game.Games.Values.MaxBy(list => list.Count).Count - oldGame.Value.SkipLast(1).Count() - 1;
+                                    List<int> otherGamehistory = new List<int>(new int[otherZeros]).Concat(oldGame.Value.SkipLast(1)).ToList();
+
+                                    for (int i = 0; i < currGameHistory.Count; i++)
+                                    {
+                                        int currG = currGameHistory[i];
+                                        int otherG = otherGamehistory[i];
+
+                                        if (currG >= otherG)
+                                        {
+                                            boldPoints.Add(new KeyValuePair<bool, string>(true, currG.ToString()));
+                                        }
+                                        else
+                                        {
+                                            boldPoints.Add(new KeyValuePair<bool, string>(false, currG.ToString()));
+                                        }
+                                    }
+                                }
+
+                                if (draw && !drawn2)
+                                {
+                                    drawn2 = true;
+                                    <label>
+                                        Games:
+                                    </label>
+
+                                    string separator = "";
+                                    for (int i = 0; i < boldPoints.Count; i++)
+                                    {
+                                        KeyValuePair<bool, string> point = boldPoints[i];
+                                        separator = " | ";
+                                        if (i + 1 == currGameHistory.Count)
+                                        {
+                                            separator = "";
+                                        }
+
+                                        if (point.Key)
+                                        {
+                                            <label style="font-weight:bold">
+                                                @point.Value
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label>
+                                                @point.Value
+                                            </label>
+                                        }
+
+                                        <label>
+                                            @separator
+                                        </label>
+                                    }
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            <tr style="font-weight:bold">
+                <td>Summary</td>
+                <td>@game.Games.Values.Select(list => list.SkipLast(1).Sum()).Sum()</td>
+                <td>@game.Games.Values.Select(list => list.Last()).Sum()</td>
+                <td colspan="2"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <input type="text" placeholder="Name" @bind-value="newPlayerName" />
+    <button @onclick="AddNewRow">Add Row</button>
+    <button @onclick="EndGame">End game</button>
+</div>
 
 <style>
-    /* Page title */
-    .page-title {
-        font-size: 2rem;
-        text-align: center;
-        color: #337ab7;
-        margin: 1rem 0;
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.4;
+        color: #333;
+        background-color: #f4f4f4;
     }
 
-    /* Game table */
-    .game-table {
-        width: 100%;
+    h1 {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    input[type="text"], input[type="number"] {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        width: 200px;
+        max-width: 100%;
+    }
+
+    button {
+        padding: 8px 16px;
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+        color: #fff;
+        font-size: 14px;
+        cursor: pointer;
+        margin-bottom: 10px;
+    }
+
+    table {
         border-collapse: collapse;
-        margin-top: 1rem;
-        font-size: 1.2rem;
+        margin-bottom: 20px;
+        width: 100%;
     }
 
-        .game-table th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-            padding: 0.5rem;
-            text-align: left;
-            border-bottom: 2px solid #337ab7;
-        }
+    th, td {
+        padding: 8px;
+        text-align: left;
+        vertical-align: middle;
+        border: 1px solid #ccc;
+    }
 
-        .game-table td {
-            padding: 0.5rem;
-            text-align: left;
-            border-bottom: 1px solid #ccc;
-        }
+    th {
+        background-color: #007bff;
+        color: #fff;
+        font-weight: bold;
+    }
 
-        .game-table tbody tr:hover {
-            background-color: #f5f5f5;
-            cursor: pointer;
-        }
+    tr:hover {
+        background-color: #f4f4f4;
+    }
 
-        .game-table .points-input {
-            width: 4rem;
-            text-align: right;
-            border: none;
-            background-color: #f2f2f2;
-        }
+    tr:nth-child(even) {
+        background-color: #e6e6e6;
+    }
 
-        .game-table .button {
-            display: inline-block;
-            width: 2rem;
-            height: 2rem;
-            line-height: 2rem;
-            text-align: center;
-            background-color: #337ab7;
-            color: #fff;
-            border: none;
-            border-radius: 0.2rem;
-            margin-right: 0.5rem;
-            cursor: pointer;
-        }
+    td:last-child {
+        text-align: center;
+    }
 
-            .game-table .button:hover {
-                background-color: #23527c;
-            }
+    .sets {
+        font-size: 12px;
+        color: #666;
+    }
 
-            .game-table .button:active {
-                background-color: #174d75;
-            }
-
-        .game-table .sets-row {
-            background-color: #f2f2f2;
-            font-style: italic;
-            padding: 0.5rem;
-        }
+    .summary {
+        font-weight: bold;
+    }
 </style>
 
 @code {
-    private GameDto game = new GameDto() { Id = "mau" };
+    private SessionDto game = new SessionDto() { Id = DateTime.UtcNow.ToString("MM-dd-yyyy"), Games = new Dictionary<string, List<int>>() };
     private HashSet<string> expandedRows = new HashSet<string>();
     private string newPlayerName = "";
+    private string openGameId = "";
+
+    protected async override void OnInitialized()
+    {
+        SessionDto cookieGame = (await GameClient.GetGame()).Content;
+        if (cookieGame != null)
+        {
+            game = cookieGame;
+        }
+    }
+
+    private async void OpenGame()
+    {
+        if (!string.IsNullOrEmpty(openGameId))
+        {
+            var res = await GameClient.GetGame(openGameId);
+            if (res.StatusCode == HttpStatusCode.NotFound)
+            {
+                game = (await GameClient.UpdateGame(new SessionDto() { Id = openGameId })).Content;
+            }
+            else
+            {
+                game = res.Content;
+            }
+        }
+        StateHasChanged();
+    }
 
     private void ToggleRow(string playerName)
     {
@@ -151,51 +310,51 @@
 
     private async void CurrSetChanged(string playerName, int currSet)
     {
-        var valueList = game.Sets[playerName];
+        var valueList = game.Games[playerName];
         valueList[valueList.Count - 1] = currSet;
 
-        await GameClient.UpdateGame(game);
+        game = (await GameClient.UpdateGame(game)).Content;
     }
 
     private async void IncrementCurrValue(string playerName)
     {
-        var valueList = game.Sets[playerName];
+        var valueList = game.Games[playerName];
         var lastValue = valueList.Last();
         valueList[valueList.Count - 1] = lastValue + 1;
 
-        await GameClient.UpdateGame(game);
+        game = (await GameClient.UpdateGame(game)).Content;
     }
 
     private async void DecrementCurrValue(string playerName)
     {
-        var valueList = game.Sets[playerName];
+        var valueList = game.Games[playerName];
         var lastValue = valueList.Last();
         if (lastValue > 0)
         {
             valueList[valueList.Count - 1] = lastValue - 1;
         }
 
-        await GameClient.UpdateGame(game);
+        game = (await GameClient.UpdateGame(game)).Content;
     }
 
     private async void AddNewRow()
     {
         if (!string.IsNullOrEmpty(newPlayerName))
         {
-            game.Sets[newPlayerName] = new List<int>() { 0 };
+            game.Games[newPlayerName] = new List<int>() { 0 };
             newPlayerName = "";
         }
 
-        await GameClient.UpdateGame(game);
+        game = (await GameClient.UpdateGame(game)).Content;
     }
 
-    private async void EndSet()
+    private async void EndGame()
     {
-        foreach (var entry in game.Sets)
+        foreach (var entry in game.Games)
         {
             entry.Value.Add(0);
         }
 
-        await GameClient.UpdateGame(game);
+        game = (await GameClient.UpdateGame(game)).Content;
     }
 }

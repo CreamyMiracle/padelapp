@@ -24,46 +24,46 @@ namespace PadelApp.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<GameDto>> GetGame()
+        public async Task<ActionResult<SessionDto>> GetGame()
         {
             string? gameId = ControllerContext.HttpContext.Request.Cookies["currentGameId"];
 
-            Game? game = await _gameRepository.GetGame(gameId);
+            Session? game = await _gameRepository.GetGame(gameId);
 
             if (game == null) { return NotFound(string.Format("Game with ID '{0}' not found", gameId)); }
             
-            return _mapper.Map<GameDto>(game);
+            return _mapper.Map<SessionDto>(game);
         }
 
         [HttpGet("{gameId}")]
-        public async Task<ActionResult<GameDto>> GetGame(string gameId)
+        public async Task<ActionResult<SessionDto>> GetGame(string gameId)
         {
             ControllerContext.HttpContext.Response.Cookies.Append("currentGameId", gameId);
 
-            Game? game = await _gameRepository.GetGame(gameId);
+            Session? game = await _gameRepository.GetGame(gameId);
 
             if (game == null) { return NotFound(string.Format("Game with ID '{0}' not found", gameId)); }
 
-            return _mapper.Map<GameDto>(game);
+            return _mapper.Map<SessionDto>(game);
         }
 
         [HttpPut]
-        public async Task<ActionResult<GameDto>> UpdateGame(GameDto dto)
+        public async Task<ActionResult<SessionDto>> UpdateGame(SessionDto dto)
         {
-            Game? upsertedGame = null;
+            Session? upsertedGame = null;
             if (await _gameRepository.GetGame(dto.Id) != null)
             {
-                upsertedGame = await _gameRepository.UpdateGame(_mapper.Map<Game>(dto));
+                upsertedGame = await _gameRepository.UpdateGame(_mapper.Map<Session>(dto));
             }
             else
             {
-                upsertedGame = await _gameRepository.AddGame(_mapper.Map<Game>(dto));
+                upsertedGame = await _gameRepository.AddGame(_mapper.Map<Session>(dto));
             }
 
             if (upsertedGame == null) { return StatusCode(500, string.Format("Something went wrong")); }
 
             ControllerContext.HttpContext.Response.Cookies.Append("currentGameId", upsertedGame.Id);
-            return _mapper.Map<GameDto>(upsertedGame);
+            return _mapper.Map<SessionDto>(upsertedGame);
         }
     }
 }

@@ -12,8 +12,8 @@ namespace PadelApp.Models.Mapper
     {
         public DefaultMappingProfile()
         {
-            CreateMap<Game, GameDto>();
-            CreateMap<GameDto, Game>();
+            CreateMap<Session, SessionDto>();
+            CreateMap<SessionDto, Session>();
         }
     }
 }

@@ -16,7 +16,7 @@ builder.Services.AddServerSideBlazor();
 
 // SQLite
 SQLiteAsyncConnection con = new SQLiteAsyncConnection(@".\padelapp.db");
-con.CreateTableAsync<Game>();
+con.CreateTableAsync<Session>();
 
 // Controllers
 builder.Services.AddControllers();

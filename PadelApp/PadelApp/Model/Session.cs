@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace PadelApp.Model
 {
-    public class Game
+    public class Session
     {
         [PrimaryKey]
         // Id of this game
         public string Id { get; set; } = null!;
 
         // player name as key, points per each set as value
-        [TextBlob("SetsBlobbed")]
-        public Dictionary<string, List<int>> Sets { get; set; } = new Dictionary<string, List<int>>();
+        [TextBlob("GamesBlobbed")]
+        public Dictionary<string, List<int>> Games { get; set; } = new Dictionary<string, List<int>>();
 
-        public string SetsBlobbed { get; set; }
+        public string GamesBlobbed { get; set; }
     }
 }
