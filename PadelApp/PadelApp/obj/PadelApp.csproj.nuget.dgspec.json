@@ -1,29 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "F:\\Dev\\padelappold2\\PadelApp\\PadelApp\\PadelApp.csproj": {}
+    "D:\\Dev\\padelapp\\PadelApp\\PadelApp\\PadelApp.csproj": {}
   },
   "projects": {
-    "F:\\Dev\\padelappold2\\PadelApp\\PadelApp\\PadelApp.csproj": {
+    "D:\\Dev\\padelapp\\PadelApp\\PadelApp\\PadelApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\Dev\\padelappold2\\PadelApp\\PadelApp\\PadelApp.csproj",
+        "projectUniqueName": "D:\\Dev\\padelapp\\PadelApp\\PadelApp\\PadelApp.csproj",
         "projectName": "PadelApp",
-        "projectPath": "F:\\Dev\\padelappold2\\PadelApp\\PadelApp\\PadelApp.csproj",
-        "packagesPath": "C:\\Users\\Rajala\\.nuget\\packages\\",
-        "outputPath": "F:\\Dev\\padelappold2\\PadelApp\\PadelApp\\obj\\",
+        "projectPath": "D:\\Dev\\padelapp\\PadelApp\\PadelApp\\PadelApp.csproj",
+        "packagesPath": "C:\\Users\\JuhanaR\\.nuget\\packages\\",
+        "outputPath": "D:\\Dev\\padelapp\\PadelApp\\PadelApp\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Rajala\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\JuhanaR\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -86,7 +84,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }
