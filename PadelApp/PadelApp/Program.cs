@@ -25,7 +25,7 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<GameRepository>(new GameRepository(con));
 builder.Services.AddSingleton<SQLiteAsyncConnection>(con);
 
-IGameAPI gameAPI = RestService.For<IGameAPI>(new HttpClient() { BaseAddress = new Uri("https://padelpoints.azurewebsites.net/games") }); //"https://padelpoints.azurewebsites.net/games"
+IGameAPI gameAPI = RestService.For<IGameAPI>(new HttpClient() { BaseAddress = new Uri("http://localhost:5252/games") }); //"https://padelpoints.azurewebsites.net/games"
 builder.Services.AddSingleton<IGameAPI>(gameAPI);
 
 // Auto Mapper Configurations

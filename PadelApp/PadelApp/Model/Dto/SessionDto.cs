@@ -15,5 +15,7 @@ namespace PadelApp.Model.Dto
 
         // player name as key, points per each game as value
         public Dictionary<string, List<int>> Games { get; set; } = new Dictionary<string, List<int>>();
+
+        public int LatestCombination { get; set; }
     }
 }

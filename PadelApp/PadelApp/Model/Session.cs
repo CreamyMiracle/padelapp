@@ -20,5 +20,7 @@ namespace PadelApp.Model
         public Dictionary<string, List<int>> Games { get; set; } = new Dictionary<string, List<int>>();
 
         public string GamesBlobbed { get; set; }
+
+        public int LatestCombination { get; set; }
     }
 }
