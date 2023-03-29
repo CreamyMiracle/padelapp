@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "rHMZwZ9Aiz/YqkipTuLNnyqPeiDdWOgbLkaxY8z/jso=",
+  "Hash": "SLVKcOpT1W44BxWChoim+gqJ1RCUV6vb0CNboTXg0pI=",
   "Source": "PadelApp",
   "BasePath": "_content/PadelApp",
   "Mode": "Default",
@@ -10,17 +10,17 @@
     {
       "Name": "PadelApp\\wwwroot",
       "Source": "PadelApp",
-      "ContentRoot": "F:\\Dev\\padelappold2\\PadelApp\\PadelApp\\wwwroot\\",
+      "ContentRoot": "D:\\Dev\\padelapp\\PadelApp\\PadelApp\\wwwroot\\",
       "BasePath": "_content/PadelApp",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "F:\\Dev\\padelappold2\\PadelApp\\PadelApp\\wwwroot\\css\\site.css",
+      "Identity": "D:\\Dev\\padelapp\\PadelApp\\PadelApp\\wwwroot\\css\\site.css",
       "SourceId": "PadelApp",
       "SourceType": "Discovered",
-      "ContentRoot": "F:\\Dev\\padelappold2\\PadelApp\\PadelApp\\wwwroot\\",
+      "ContentRoot": "D:\\Dev\\padelapp\\PadelApp\\PadelApp\\wwwroot\\",
       "BasePath": "_content/PadelApp",
       "RelativePath": "css/site.css",
       "AssetKind": "All",

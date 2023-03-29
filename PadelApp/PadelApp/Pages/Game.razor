@@ -1,0 +1,583 @@
+﻿@page "/new"
+@page "/game/{OpenGameId}"
+@inject IGameAPI GameClient
+@inject NavigationManager NavigationManager
+@using PadelApp.Model.Dto
+@using PaldeApp;
+@using System.Net;
+@inject NavigationManager NavManager
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+    body {
+        margin: 10px;
+        padding: 0;
+    }
+
+    .base-container {
+        display: grid;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        height: 85vh;
+        width: 100%;
+    }
+
+    .court {
+        position: relative;
+        height: 100%;
+        width: 100%;
+        border: 3px solid gray;
+        border-radius: 10px;
+        background-color: #1E8FD5;
+    }
+
+    .line {
+        position: absolute;
+        background-color: gray;
+    }
+
+    .center-line-top {
+        width: 3px;
+        top: 15.25%;
+        bottom: 55%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: white;
+    }
+
+    .center-line-bottom {
+        width: 3px;
+        bottom: 15.25%;
+        top: 55%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: white;
+    }
+
+    .net-line-right {
+        height: 3px;
+        width: 100%;
+        top: 50%;
+        right: 60%;
+        background-color: white;
+    }
+
+    .net-line-left {
+        height: 3px;
+        width: 100%;
+        top: 50%;
+        left: 60%;
+        background-color: white;
+    }
+
+    .service-line {
+        height: 3px;
+        width: 100%;
+        top: 15.25%;
+        background-color: white;
+    }
+
+    .back-wall-line {
+        height: 3px;
+        width: 100%;
+        bottom: 15.25%;
+        background-color: white;
+    }
+
+    table {
+        width: 100%;
+        height: 85vh; /* update: stretch table to the whole screen */
+        border-collapse: collapse;
+    }
+
+    .td {
+        padding: 5px;
+        text-align: center;
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: 0;
+    }
+
+    .td-button {
+        padding: 10px;
+        text-align: center;
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: 0;
+        font-size: 50px;
+    }
+
+    .middle-td {
+        text-align: center;
+        width: 10%;
+    }
+
+    .point-input {
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        background-color: transparent;
+        border: 1px solid black;
+        outline: none;
+    }
+
+    .point-input-readonly {
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        background-color: transparent;
+        border: 1px solid #1E8FD5;
+        outline: none;
+    }
+
+    .name-input {
+        width: 90%;
+        text-align: center;
+        background-color: transparent;
+        white-space: nowrap;
+        border: 1px solid black;
+        border-radius: 5px;
+        outline: none;
+    }
+
+    .name-input-readonly {
+        width: 90%;
+        text-align: center;
+        background-color: transparent;
+        white-space: nowrap;
+        border: 1px solid #1E8FD5;
+        border-radius: 5px;
+        outline: none;
+    }
+
+    .layer {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    html * {
+        font-family: "Open Sans", sans-serif;
+        font-size: 103%;
+    }
+</style>
+
+<body>
+    <div class="base-container">
+        <div class="container">
+            <div class="court">
+                <div class="layer">
+                    <table>
+                        <tr>
+                            <td @onclick="@(() => DecrementCurrValue(0, 1))" class="td-button">-</td>
+                            <td class="middle-td">
+                                @if (game != null && game.Games.ElementAt(0).Key != "1" && game.Games.ElementAt(1).Key != "2" && game.Games.ElementAt(0).Value.Count != 0 && game.Games.ElementAt(1).Value.Count != 0)
+                                {
+                                    <input class="point-input" value="@game.Games.ElementAt(0).Value.Last()" @onchange="@((e) => CurrSetChanged(0, 1, e.Value.ToString()))" />
+                                }
+                                else
+                                {
+                                    <input class="point-input-readonly" readonly />
+                                }
+                            </td>
+                            <td @onclick="@(() => IncrementCurrValue(0, 1))" class="td-button">+</td>
+                        </tr>
+                        <tr>
+                            @if (game != null && game.Games.ElementAt(0).Key != "1")
+                            {
+                                <td class="td">
+                                    <input class="name-input-readonly" type="text" value=@game.Games.ElementAt(0).Key readonly />
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="td">
+                                    <input class="name-input" type="text" placeholder="Name" @bind-value="newPlayerName" @onblur="(()=> AddNewRow(0))" />
+                                </td>
+                            }
+                            <td class="middle-td"></td>
+                            @if (game != null && game.Games.ElementAt(1).Key != "2")
+                            {
+                                <td class="td">
+                                    <input class="name-input-readonly" type="text" value=@game.Games.ElementAt(1).Key readonly />
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="td">
+                                    <input class="name-input" type="text" placeholder="Name" @bind-value="newPlayerName" @onblur="(()=> AddNewRow(1))" />
+                                </td>
+                            }
+                        </tr>
+                        <tr>
+                            @if (game != null && game.Games.ElementAt(0).Key != "1")
+                            {
+                                <td class="td">@game.Games.ElementAt(0).Value.SkipLast(1).Sum()</td>
+                            }
+                            else
+                            {
+                                <td class="td">0</td>
+                            }
+                            <td class="middle-td"></td>
+                            @if (game != null && game.Games.ElementAt(1).Key != "2")
+                            {
+                                <td class="td">@game.Games.ElementAt(1).Value.SkipLast(1).Sum()</td>
+                            }
+                            else
+                            {
+                                <td class="td">0</td>
+                            }
+                        </tr>
+                        <tr>
+                            <td class="td"></td>
+                            <td class="middle-td">
+                                <i @onclick="EndGame" class="fa fa-refresh" aria-hidden="true" style="font-size:36px;"></i>
+                            </td>
+                            <td class="td"></td>
+                        </tr>
+                        <tr>
+                            @if (game != null && game.Games.ElementAt(2).Key != "3")
+                            {
+                                <td class="td">@game.Games.ElementAt(2).Value.SkipLast(1).Sum()</td>
+                            }
+                            else
+                            {
+                                <td class="td">0</td>
+                            }
+                            <td class="middle-td"></td>
+                            @if (game != null && game.Games.ElementAt(3).Key != "4")
+                            {
+                                <td class="td">@game.Games.ElementAt(3).Value.SkipLast(1).Sum()</td>
+                            }
+                            else
+                            {
+                                <td class="td">0</td>
+                            }
+                        </tr>
+                        <tr>
+                            @if (game != null && game.Games.ElementAt(2).Key != "3")
+                            {
+                                <td class="td">
+                                    <input class="name-input-readonly" type="text" value=@game.Games.ElementAt(2).Key readonly />
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="td">
+                                    <input class="name-input" type="text" placeholder="Name" @bind-value="newPlayerName" @onblur="(()=> AddNewRow(2))" />
+                                </td>
+                            }
+                            <td class="middle-td"></td>
+                            @if (game != null && game.Games.ElementAt(3).Key != "4")
+                            {
+                                <td class="td">
+                                    <input class="name-input-readonly" type="text" value=@game.Games.ElementAt(3).Key readonly />
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="td">
+                                    <input class="name-input" type="text" placeholder="Name" @bind-value="newPlayerName" @onblur="(()=> AddNewRow(3))" />
+                                </td>
+                            }
+                        </tr>
+                        <tr>
+                            <td @onclick="@(() => DecrementCurrValue(2, 3))" class="td-button">-</td>
+                            <td class="middle-td">
+                                @if (game != null && game.Games.ElementAt(2).Key != "3" && game.Games.ElementAt(3).Key != "4" && game.Games.ElementAt(2).Value.Count != 0 && game.Games.ElementAt(3).Value.Count != 0)
+                                {
+                                    <input class="point-input" value="@game.Games.ElementAt(2).Value.Last()" @onchange="@((e) => CurrSetChanged(2, 3, e.Value.ToString()))" />
+                                }
+                                else
+                                {
+                                    <input class="point-input-readonly" readonly />
+                                }
+                            </td>
+                            <td @onclick="@(() => IncrementCurrValue(2, 3))" class="td-button">+</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="layer">
+                    <div class="line center-line-top"></div>
+                    <div class="line center-line-bottom"></div>
+                    <div class="line net-line-left"></div>
+                    <div class="line net-line-right"></div>
+                    <div class="line service-line"></div>
+                    <div class="line back-wall-line"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+
+@code {
+    [Parameter]
+    public string OpenGameId { get; set; }
+
+    private SessionDto game = new SessionDto()
+        {
+            Id = null,
+            Games = new Dictionary<string, List<int>>()
+        {
+            { "1", new List<int>() { 0 } },
+            { "2", new List<int>() { 0 } },
+            { "3", new List<int>() { 0 } },
+            { "4", new List<int>() { 0 } }
+        }
+        };
+
+    private HashSet<string> expandedRows = new HashSet<string>();
+    private string newPlayerName = "";
+
+    protected override async void OnInitialized()
+    {
+        if (!string.IsNullOrEmpty(OpenGameId))
+        {
+            OpenGame(OpenGameId);
+        }
+        else
+        {
+            var res = await GameClient.GetGame();
+            SessionDto cookieGame = res.Content;
+            if (cookieGame != null)
+            {
+                game = cookieGame;
+                OpenGameId = game.Id;
+            }
+            else
+            {
+                OpenGameId = DateTime.Now.ToString("MM-dd-yyyy-hh-mm-ss");
+            }
+
+            NavManager.NavigateTo("/game/" + OpenGameId, true);
+        }
+
+        StateHasChanged();
+    }
+
+    private List<KeyValuePair<bool, int>> CapsGames(string playerName)
+    {
+        KeyValuePair<string, List<int>> currGame = game.Games.Where(kv => kv.Key == playerName).FirstOrDefault();
+        List<KeyValuePair<bool, int>> boldPoints = new List<KeyValuePair<bool, int>>();
+
+        List<List<int>> normalizedGames = new List<List<int>>();
+        List<int> currNormalizedGames = new List<int>();
+
+        foreach (var oldGame in game.Games)
+        {
+            int currZeros = game.Games.Values.MaxBy(list => list.Count).Count - oldGame.Value.SkipLast(1).Count() - 1;
+            List<int> currGameHistory = new List<int>(new int[currZeros]).Concat(oldGame.Value.SkipLast(1)).ToList();
+
+            if (oldGame.Key == playerName)
+            {
+                currNormalizedGames = new List<int>(currGameHistory);
+                continue;
+            }
+            normalizedGames.Add(new List<int>(currGameHistory));
+        }
+
+
+        for (int i = 0; i < currNormalizedGames.Count; i++)
+        {
+            int currPoint = currNormalizedGames[i];
+            bool highest = true;
+
+            foreach (List<int> otherPoints in normalizedGames)
+            {
+                if (normalizedGames.Count == 0 || otherPoints.Count == 0)
+                {
+                    continue;
+                }
+                int otherPoint = otherPoints[i];
+                if (otherPoint > currPoint)
+                {
+                    highest = false;
+                }
+            }
+
+            boldPoints.Add(new KeyValuePair<bool, int>(highest, currPoint));
+        }
+
+        return boldPoints;
+    }
+
+    private int WinCount(string playerName)
+    {
+        return CapsGames(playerName).Where(kv => kv.Key).Count();
+    }
+
+    private async void OpenGame(string gameId)
+    {
+        if (!string.IsNullOrEmpty(gameId))
+        {
+            var res = await GameClient.GetGame(gameId);
+            if (res.StatusCode == HttpStatusCode.NotFound)
+            {
+                SessionDto newGame = new SessionDto()
+                    {
+                        Id = gameId,
+                        Games = new Dictionary<string, List<int>>()
+                    {
+                        { "1", new List<int>() { 0 } },
+                        { "2", new List<int>() { 0 } },
+                        { "3", new List<int>() { 0 } },
+                        { "4", new List<int>() { 0 } }
+                    }
+                    };
+                var res2 = await GameClient.UpdateGame(newGame);
+                game = res2.Content;
+            }
+            else if (res.IsSuccessStatusCode)
+            {
+                game = res.Content;
+            }
+        }
+        StateHasChanged();
+    }
+
+    private async void IncrementCurrValue(int ind1, int ind2)
+    {
+        if (game.Games.Count() >= ind1 + 1)
+        {
+            var valueList1 = game.Games.ElementAt(ind1).Value;
+            var lastValue1 = valueList1.Last();
+            valueList1[valueList1.Count - 1] = lastValue1 + 1;
+        }
+
+        if (game.Games.Count() >= ind2 + 1)
+        {
+            var valueList2 = game.Games.ElementAt(ind2).Value;
+            var lastValue2 = valueList2.Last();
+            valueList2[valueList2.Count - 1] = lastValue2 + 1;
+        }
+
+        var res = await GameClient.UpdateGame(game);
+        game = res.Content;
+    }
+
+    private async void DecrementCurrValue(int ind1, int ind2)
+    {
+        if (game.Games.Count() >= ind1 + 1)
+        {
+            var valueList1 = game.Games.ElementAt(ind1).Value;
+            var lastValue1 = valueList1.Last();
+            valueList1[valueList1.Count - 1] = lastValue1 - 1;
+        }
+
+        if (game.Games.Count() >= ind2 + 1)
+        {
+            var valueList2 = game.Games.ElementAt(ind2).Value;
+            var lastValue2 = valueList2.Last();
+            valueList2[valueList2.Count - 1] = lastValue2 - 1;
+        }
+        var res = await GameClient.UpdateGame(game);
+        game = res.Content;
+    }
+
+    private async void CurrSetChanged(int ind1, int ind2, string currSet)
+    {
+        int num;
+        if (int.TryParse(currSet, out num))
+        {
+            if (game.Games.Count() >= ind1 + 1)
+            {
+                var valueList1 = game.Games.ElementAt(ind1).Value;
+                var lastValue1 = valueList1.Last();
+                valueList1[valueList1.Count - 1] = num;
+            }
+
+            if (game.Games.Count() >= ind2 + 1)
+            {
+                var valueList2 = game.Games.ElementAt(ind2).Value;
+                var lastValue2 = valueList2.Last();
+                valueList2[valueList2.Count - 1] = num;
+            }
+
+            var res = await GameClient.UpdateGame(game);
+            game = res.Content;
+        }
+    }
+
+
+
+    private async void AddNewRow(int ind)
+    {
+        Dictionary<string, List<int>> newGames = new Dictionary<string, List<int>>();
+        if (game.Games.ContainsKey(newPlayerName) || string.IsNullOrEmpty(newPlayerName))
+        {
+            newPlayerName = "";
+            return;
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            string name = game.Games.ElementAt(i).Key;
+            if (ind == i)
+            {
+                name = newPlayerName;
+            }
+            newGames.Add(name, game.Games.ElementAt(i).Value);
+        }
+        game.Games = newGames;
+        newPlayerName = "";
+        var res = await GameClient.UpdateGame(game);
+        game = (res).Content;
+    }
+
+    private async void DeleteRow(string playerName)
+    {
+        game.Games.Remove(playerName);
+
+        var res = await GameClient.UpdateGame(game);
+        game = res.Content;
+    }
+
+    private async void EndGame()
+    {
+        foreach (var entry in game.Games)
+        {
+            entry.Value.Add(0);
+        }
+
+        int nextCombination = game.LatestCombination == 2 ? 0 : game.LatestCombination;
+        nextCombination++;
+
+        Dictionary<string, List<int>> newGames = new Dictionary<string, List<int>>();
+
+        if (nextCombination == 0)
+        {
+            newGames.Add(game.Games.ElementAt(1).Key, game.Games.ElementAt(1).Value);
+            newGames.Add(game.Games.ElementAt(3).Key, game.Games.ElementAt(3).Value);
+            newGames.Add(game.Games.ElementAt(0).Key, game.Games.ElementAt(0).Value);
+            newGames.Add(game.Games.ElementAt(2).Key, game.Games.ElementAt(2).Value);
+        }
+        else if (nextCombination == 1)
+        {
+            newGames.Add(game.Games.ElementAt(0).Key, game.Games.ElementAt(0).Value);
+            newGames.Add(game.Games.ElementAt(2).Key, game.Games.ElementAt(2).Value);
+            newGames.Add(game.Games.ElementAt(3).Key, game.Games.ElementAt(3).Value);
+            newGames.Add(game.Games.ElementAt(1).Key, game.Games.ElementAt(1).Value);
+        }
+        else if (nextCombination == 2)
+        {
+            newGames.Add(game.Games.ElementAt(1).Key, game.Games.ElementAt(1).Value);
+            newGames.Add(game.Games.ElementAt(0).Key, game.Games.ElementAt(0).Value);
+            newGames.Add(game.Games.ElementAt(2).Key, game.Games.ElementAt(2).Value);
+            newGames.Add(game.Games.ElementAt(3).Key, game.Games.ElementAt(3).Value);
+        }
+
+        game.Games = newGames;
+
+        var res = await GameClient.UpdateGame(game);
+        game = res.Content;
+    }
+}

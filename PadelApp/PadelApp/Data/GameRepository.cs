@@ -27,7 +27,7 @@ namespace PadelApp.Data
 
         public async Task<Session?> AddGame(Session game)
         {
-            await db_con.InsertWithChildrenAsync(game);
+            await db_con.InsertOrReplaceWithChildrenAsync(game);
             return game;
         }
 
