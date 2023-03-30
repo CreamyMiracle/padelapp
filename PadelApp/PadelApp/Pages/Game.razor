@@ -102,6 +102,13 @@
         max-width: 0;
     }
 
+    .td-open-game-input {
+        padding: 5px;
+        text-align: center;
+        overflow: hidden;
+        max-width: 0;
+    }
+
     .middle-td {
         text-align: center;
         width: 10%;
@@ -150,17 +157,47 @@
         outline: none;
     }
 
-    .layer-top {
+    .open-game-input {
+        width: 70%;
+        text-align: center;
+        background-color: transparent;
+        white-space: nowrap;
+        border-radius: 5px;
+        outline: none;
+        float: left;
+        display: inline-block;
+    }
+
+    .open-game-button {
+        float: right;
+        display: inline-block;
+        width: 25%;
+    }
+
+    .layer-name {
         grid-column: 1;
         grid-row: 1;
+        height: 25%;
+    }
+
+    .layer-top {
+        grid-column: 1;
+        grid-row: 2;
         z-index: 2147483647;
     }
 
     .layer-bot {
         grid-column: 1;
-        grid-row: 1;
+        grid-row: 2;
         z-index: -214743647;
     }
+
+    .layer-open {
+        grid-column: 1;
+        grid-row: 3;
+        height: 25%;
+    }
+
 
     html * {
         font-family: "Open Sans", sans-serif;
@@ -170,6 +207,14 @@
 
 <body>
     <div class="base-container">
+        <table class="layer-name">
+            <tr>
+                <td class="td-open-game-input">
+                    <input class="open-game-input" @bind-value="OpenGameRequestId" />
+                    <button class="open-game-button" @onclick="@(() => NavManager.NavigateTo("/game/" + _openGameRequestId, true))">Open</button>
+                </td>
+            </tr>
+        </table>
         <div class="container">
             <div class="court">
                 <div class="layer-bot">
@@ -241,20 +286,6 @@
                             }
                         </tr>
                         <tr>
-                            <td class="td"></td>
-                            @if (AllReady())
-                            {
-                                <td class="middle-td-end">
-                                    <i @onclick="EndGame" class="fa fa-refresh" aria-hidden="true" style="font-size:36px; z-index: 2147483647;"></i>
-                                </td>
-                            }
-                            else
-                            {
-                                <td class="td"></td>
-                            }
-                            <td class="td"></td>
-                        </tr>
-                        <tr>
                             @if (game != null && game.Games.ElementAt(2).Key != "3")
                             {
                                 <td class="td">@game.Games.ElementAt(2).Value.SkipLast(1).Sum()</td>
@@ -318,12 +349,33 @@
                 </div>
             </div>
         </div>
+        <table class="layer-open">
+            <tr>
+                <td class="td-open-game-input">
+                    <button style="width:100%;" @onclick="EndGame">Switch</button>
+                </td>
+            </tr>
+        </table>
     </div>
 </body>
 
 
 
 @code {
+    private string OpenGameRequestId
+    {
+        get
+        {
+            return game == null || game.Id == null ? DateTime.Now.ToString("MM-dd-yyyy") : game.Id;
+        }
+        set
+        {
+            _openGameRequestId = value;
+        }
+    }
+
+    private string _openGameRequestId;
+
     [Parameter]
     public string OpenGameId { get; set; }
 
@@ -359,7 +411,7 @@
             }
             else
             {
-                OpenGameId = DateTime.Now.ToString("MM-dd-yyyy-hh-mm-ss");
+                OpenGameId = DateTime.Now.ToString("MM-dd-yyyy");
             }
 
             NavManager.NavigateTo("/game/" + OpenGameId, true);
@@ -521,8 +573,6 @@
         }
     }
 
-
-
     private async void AddNewRow(int ind)
     {
         Dictionary<string, List<int>> newGames = new Dictionary<string, List<int>>();
@@ -567,35 +617,34 @@
             entry.Value.Add(0);
         }
 
-        int nextCombination = game.LatestCombination == 2 ? 0 : game.LatestCombination;
-        nextCombination++;
+        int nextCombination = game.LatestCombination == 2 ? 0 : game.LatestCombination + 1;
 
         Dictionary<string, List<int>> newGames = new Dictionary<string, List<int>>();
 
         if (nextCombination == 0)
         {
-            newGames.Add(game.Games.ElementAt(1).Key, game.Games.ElementAt(1).Value);
-            newGames.Add(game.Games.ElementAt(3).Key, game.Games.ElementAt(3).Value);
-            newGames.Add(game.Games.ElementAt(0).Key, game.Games.ElementAt(0).Value);
-            newGames.Add(game.Games.ElementAt(2).Key, game.Games.ElementAt(2).Value);
+            newGames.Add(game.Games.ElementAt(1).Key, game.Games.ElementAt(1).Value); // 1=>0
+            newGames.Add(game.Games.ElementAt(3).Key, game.Games.ElementAt(3).Value); // 3=>1
+            newGames.Add(game.Games.ElementAt(2).Key, game.Games.ElementAt(2).Value); // 2=>2
+            newGames.Add(game.Games.ElementAt(0).Key, game.Games.ElementAt(0).Value); // 0=>3
         }
         else if (nextCombination == 1)
         {
-            newGames.Add(game.Games.ElementAt(0).Key, game.Games.ElementAt(0).Value);
-            newGames.Add(game.Games.ElementAt(2).Key, game.Games.ElementAt(2).Value);
-            newGames.Add(game.Games.ElementAt(3).Key, game.Games.ElementAt(3).Value);
-            newGames.Add(game.Games.ElementAt(1).Key, game.Games.ElementAt(1).Value);
+            newGames.Add(game.Games.ElementAt(2).Key, game.Games.ElementAt(2).Value); // 2=>0
+            newGames.Add(game.Games.ElementAt(0).Key, game.Games.ElementAt(0).Value); // 0=>1
+            newGames.Add(game.Games.ElementAt(3).Key, game.Games.ElementAt(3).Value); // 3=>2
+            newGames.Add(game.Games.ElementAt(1).Key, game.Games.ElementAt(1).Value); // 1=>3
         }
         else if (nextCombination == 2)
         {
-            newGames.Add(game.Games.ElementAt(1).Key, game.Games.ElementAt(1).Value);
-            newGames.Add(game.Games.ElementAt(0).Key, game.Games.ElementAt(0).Value);
-            newGames.Add(game.Games.ElementAt(2).Key, game.Games.ElementAt(2).Value);
-            newGames.Add(game.Games.ElementAt(3).Key, game.Games.ElementAt(3).Value);
+            newGames.Add(game.Games.ElementAt(2).Key, game.Games.ElementAt(2).Value); // 2=>0
+            newGames.Add(game.Games.ElementAt(1).Key, game.Games.ElementAt(1).Value); // 1=>1
+            newGames.Add(game.Games.ElementAt(0).Key, game.Games.ElementAt(0).Value); // 0=>2
+            newGames.Add(game.Games.ElementAt(3).Key, game.Games.ElementAt(3).Value); // 3=>3
         }
 
         game.Games = newGames;
-
+        game.LatestCombination = nextCombination;
         var res = await GameClient.UpdateGame(game);
         game = res.Content;
     }
