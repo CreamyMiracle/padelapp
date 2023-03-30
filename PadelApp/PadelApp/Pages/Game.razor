@@ -15,10 +15,12 @@
     body {
         margin: 10px;
         padding: 0;
+        z-index: 2147483647;
     }
 
     .base-container {
         display: grid;
+        z-index: 2147483647;
     }
 
     .container {
@@ -28,6 +30,7 @@
         align-items: center;
         height: 85vh;
         width: 100%;
+        z-index: 214748367;
     }
 
     .court {
@@ -37,6 +40,7 @@
         border: 3px solid gray;
         border-radius: 10px;
         background-color: #1E8FD5;
+        z-index: 21474836;
     }
 
     .line {
@@ -44,37 +48,20 @@
         background-color: gray;
     }
 
-    .center-line-top {
+
+    .center-line {
         width: 3px;
         top: 15.25%;
-        bottom: 55%;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: white;
-    }
-
-    .center-line-bottom {
-        width: 3px;
         bottom: 15.25%;
-        top: 55%;
         left: 50%;
         transform: translateX(-50%);
         background-color: white;
     }
 
-    .net-line-right {
+    .net-line {
         height: 3px;
         width: 100%;
         top: 50%;
-        right: 60%;
-        background-color: white;
-    }
-
-    .net-line-left {
-        height: 3px;
-        width: 100%;
-        top: 50%;
-        left: 60%;
         background-color: white;
     }
 
@@ -104,6 +91,7 @@
         overflow: hidden;
         white-space: nowrap;
         max-width: 0;
+        z-index: 2147483647;
     }
 
     .td-button {
@@ -112,10 +100,14 @@
         overflow: hidden;
         white-space: nowrap;
         max-width: 0;
-        font-size: 50px;
     }
 
     .middle-td {
+        text-align: center;
+        width: 10%;
+    }
+
+    .middle-td-end {
         text-align: center;
         width: 10%;
     }
@@ -130,8 +122,8 @@
     }
 
     .point-input-readonly {
-        width: 30px;
-        height: 30px;
+        width: 30%;
+        height: 30%;
         text-align: center;
         background-color: transparent;
         border: 1px solid #1E8FD5;
@@ -158,9 +150,16 @@
         outline: none;
     }
 
-    .layer {
+    .layer-top {
         grid-column: 1;
         grid-row: 1;
+        z-index: 2147483647;
+    }
+
+    .layer-bot {
+        grid-column: 1;
+        grid-row: 1;
+        z-index: -214743647;
     }
 
     html * {
@@ -173,7 +172,13 @@
     <div class="base-container">
         <div class="container">
             <div class="court">
-                <div class="layer">
+                <div class="layer-bot">
+                    <div class="line center-line"></div>
+                    <div class="line net-line"></div>
+                    <div class="line service-line"></div>
+                    <div class="line back-wall-line"></div>
+                </div>
+                <div class="layer-top">
                     <table>
                         <tr>
                             <td @onclick="@(() => DecrementCurrValue(0, 1))" class="td-button">-</td>
@@ -237,9 +242,16 @@
                         </tr>
                         <tr>
                             <td class="td"></td>
-                            <td class="middle-td">
-                                <i @onclick="EndGame" class="fa fa-refresh" aria-hidden="true" style="font-size:36px;"></i>
-                            </td>
+                            @if (AllReady())
+                            {
+                                <td class="middle-td-end">
+                                    <i @onclick="EndGame" class="fa fa-refresh" aria-hidden="true" style="font-size:36px; z-index: 2147483647;"></i>
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="td"></td>
+                            }
                             <td class="td"></td>
                         </tr>
                         <tr>
@@ -304,14 +316,6 @@
                         </tr>
                     </table>
                 </div>
-                <div class="layer">
-                    <div class="line center-line-top"></div>
-                    <div class="line center-line-bottom"></div>
-                    <div class="line net-line-left"></div>
-                    <div class="line net-line-right"></div>
-                    <div class="line service-line"></div>
-                    <div class="line back-wall-line"></div>
-                </div>
             </div>
         </div>
     </div>
@@ -362,6 +366,11 @@
         }
 
         StateHasChanged();
+    }
+
+    private bool AllReady()
+    {
+        return game != null && !game.Games.ContainsKey("1") && !game.Games.ContainsKey("2") && !game.Games.ContainsKey("3") && !game.Games.ContainsKey("4");
     }
 
     private List<KeyValuePair<bool, int>> CapsGames(string playerName)
@@ -485,6 +494,11 @@
 
     private async void CurrSetChanged(int ind1, int ind2, string currSet)
     {
+        if (!AllReady())
+        {
+            return;
+        }
+
         int num;
         if (int.TryParse(currSet, out num))
         {
@@ -543,6 +557,11 @@
 
     private async void EndGame()
     {
+        if (!AllReady())
+        {
+            return;
+        }
+
         foreach (var entry in game.Games)
         {
             entry.Value.Add(0);
