@@ -240,29 +240,82 @@
                             <td @onclick="@(() => IncrementCurrValue(0, 1))" class="td-button">+</td>
                         </tr>
                         <tr>
-                            @if (game != null && game.Games.ElementAt(0).Key != "1")
+                            <td class="td" style="font-size: 70%;">
+                                @if (true)
+                                {
+                                    List<KeyValuePair<bool, int>> games = CapsGames(game.Games.ElementAt(0).Key);
+
+                                    for (int i = 0; i < games.Count; i++)
+                                    {
+                                        if (i != 0 && i != games.Count && games.Count > 1)
+                                        {
+                                            <label>|</label>
+                                        }
+                                        var pair = games[i];
+
+                                        if (pair.Key)
+                                        {
+                                            <b>@pair.Value</b>
+                                        }
+                                        else
+                                        {
+                                            <small style="font-size: 90%;">@pair.Value</small>
+                                        }  
+                                    }
+                                }
+                            </td>
+
+                            <td class="middle-td"></td>
+
+                            <td class="td" style="font-size: 70%;">
+                                @if (true)
+                                {
+                                    List<KeyValuePair<bool, int>> games = CapsGames(game.Games.ElementAt(1).Key);
+
+                                    for (int i = 0; i < games.Count; i++)
+                                    {
+                                        if (i != 0 && i != games.Count && games.Count > 1)
+                                        {
+                                            <label>|</label>
+                                        }
+                                        var pair = games[i];
+
+                                        if (pair.Key)
+                                        {
+                                            <b>@pair.Value</b>
+                                        }
+                                        else
+                                        {
+                                            <small style="font-size: 90%;">@pair.Value</small>
+                                        }
+                                    }
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            @if (game != null && game.Games.ElementAt(0).Key != "1" && !CurrentlyRenaming[0])
                             {
                                 <td class="td">
-                                    <input class="name-input-readonly" type="text" value=@game.Games.ElementAt(0).Key readonly />
+                                    <input class="name-input-readonly" type="text" value=@game.Games.ElementAt(0).Key readonly @ondblclick="(() => Rename(0, true))" />
                                 </td>
                             }
                             else
                             {
                                 <td class="td">
-                                    <input class="name-input" type="text" placeholder="Name" @bind-value="newPlayerName" @onblur="(()=> AddNewRow(0))" />
+                                    <input class="name-input" type="text" placeholder="Name" @bind-value="NewPlayerNames[0]" @onblur="(()=> AddNewRow(0))" />
                                 </td>
                             }
                             <td class="middle-td"></td>
-                            @if (game != null && game.Games.ElementAt(1).Key != "2")
+                            @if (game != null && game.Games.ElementAt(1).Key != "2" && !CurrentlyRenaming[1])
                             {
                                 <td class="td">
-                                    <input class="name-input-readonly" type="text" value=@game.Games.ElementAt(1).Key readonly />
+                                    <input class="name-input-readonly" type="text" value=@game.Games.ElementAt(1).Key readonly @ondblclick="(() => Rename(1, true))" />
                                 </td>
                             }
                             else
                             {
                                 <td class="td">
-                                    <input class="name-input" type="text" placeholder="Name" @bind-value="newPlayerName" @onblur="(()=> AddNewRow(1))" />
+                                    <input class="name-input" type="text" placeholder="Name" @bind-value="NewPlayerNames[1]" @onblur="(()=> AddNewRow(1))" />
                                 </td>
                             }
                         </tr>
@@ -305,31 +358,84 @@
                             }
                         </tr>
                         <tr>
-                            @if (game != null && game.Games.ElementAt(2).Key != "3")
+                            @if (game != null && game.Games.ElementAt(2).Key != "3" && !CurrentlyRenaming[2])
                             {
                                 <td class="td">
-                                    <input class="name-input-readonly" type="text" value=@game.Games.ElementAt(2).Key readonly />
+                                    <input class="name-input-readonly" type="text" value=@game.Games.ElementAt(2).Key readonly @ondblclick="(() => Rename(2, true))" />
                                 </td>
                             }
                             else
                             {
                                 <td class="td">
-                                    <input class="name-input" type="text" placeholder="Name" @bind-value="newPlayerName" @onblur="(()=> AddNewRow(2))" />
+                                    <input class="name-input" type="text" placeholder="Name" @bind-value="NewPlayerNames[2]" @onblur="(()=> AddNewRow(2))" />
                                 </td>
                             }
                             <td class="middle-td"></td>
-                            @if (game != null && game.Games.ElementAt(3).Key != "4")
+                            @if (game != null && game.Games.ElementAt(3).Key != "4" && !CurrentlyRenaming[3])
                             {
                                 <td class="td">
-                                    <input class="name-input-readonly" type="text" value=@game.Games.ElementAt(3).Key readonly />
+                                    <input class="name-input-readonly" type="text" value=@game.Games.ElementAt(3).Key readonly @ondblclick="(() => Rename(3, true))" />
                                 </td>
                             }
                             else
                             {
                                 <td class="td">
-                                    <input class="name-input" type="text" placeholder="Name" @bind-value="newPlayerName" @onblur="(()=> AddNewRow(3))" />
+                                    <input class="name-input" type="text" placeholder="Name" @bind-value="NewPlayerNames[3]" @onblur="(()=> AddNewRow(3))" />
                                 </td>
                             }
+                        </tr>
+                        <tr>
+                            <td class="td" style="font-size: 70%;">
+                                @if (true)
+                                {
+                                    List<KeyValuePair<bool, int>> games = CapsGames(game.Games.ElementAt(2).Key);
+
+                                    for (int i = 0; i < games.Count; i++)
+                                    {
+                                        if (i != 0 && i != games.Count && games.Count > 1)
+                                        {
+                                            <label>|</label>
+                                        }
+                                        var pair = games[i];
+
+                                        if (pair.Key)
+                                        {
+                                            <b>@pair.Value</b>
+                                        }
+                                        else
+                                        {
+                                            <small style="font-size: 90%;">@pair.Value</small>
+                                        }
+                                    }
+                                }
+                            </td>
+
+                            <td class="middle-td"></td>
+
+                            <td class="td" style="font-size: 70%;">
+                                @if (true)
+                                {
+                                    List<KeyValuePair<bool, int>> games = CapsGames(game.Games.ElementAt(3).Key);
+
+                                    for (int i = 0; i < games.Count; i++)
+                                    {
+                                        if (i != 0 && i != games.Count && games.Count > 1)
+                                        {
+                                            <label>|</label>
+                                        }
+                                        var pair = games[i];
+
+                                        if (pair.Key)
+                                        {
+                                            <b>@pair.Value</b>
+                                        }
+                                        else
+                                        {
+                                            <small style="font-size: 90%;">@pair.Value</small>
+                                        }  
+                                    }
+                                }
+                            </td>
                         </tr>
                         <tr>
                             <td @onclick="@(() => DecrementCurrValue(2, 3))" class="td-button">-</td>
@@ -362,11 +468,13 @@
 
 
 @code {
+    private Dictionary<int, bool> CurrentlyRenaming = new Dictionary<int, bool>() { { 0, false }, { 1, false }, { 2, false }, { 3, false } };
+
     private string OpenGameRequestId
     {
         get
         {
-            return game == null || game.Id == null ? DateTime.Now.ToString("MM-dd-yyyy") : game.Id;
+            return game == null || game.Id == null ? GetUniqueId() : game.Id;
         }
         set
         {
@@ -392,7 +500,13 @@
         };
 
     private HashSet<string> expandedRows = new HashSet<string>();
-    private string newPlayerName = "";
+
+    private List<string> NewPlayerNames = new List<string>() { "", "", "", "" };
+
+    private string GetUniqueId()
+    {
+        return Convert.ToBase64String(BitConverter.GetBytes(DateTime.UtcNow.Ticks)).Replace('+', '_').Replace('/', '-').TrimEnd('=');
+    }
 
     protected override async void OnInitialized()
     {
@@ -411,7 +525,7 @@
             }
             else
             {
-                OpenGameId = DateTime.Now.ToString("MM-dd-yyyy");
+                OpenGameId = GetUniqueId();
             }
 
             NavManager.NavigateTo("/game/" + OpenGameId, true);
@@ -451,6 +565,7 @@
         {
             int currPoint = currNormalizedGames[i];
             bool highest = true;
+            bool tie = true;
 
             foreach (List<int> otherPoints in normalizedGames)
             {
@@ -463,7 +578,13 @@
                 {
                     highest = false;
                 }
+                if (otherPoint != currPoint)
+                {
+                    tie = false;
+                }
             }
+
+            highest = tie ? false : highest;
 
             boldPoints.Add(new KeyValuePair<bool, int>(highest, currPoint));
         }
@@ -496,10 +617,12 @@
                     };
                 var res2 = await GameClient.UpdateGame(newGame);
                 game = res2.Content;
+                _openGameRequestId = game.Id;
             }
             else if (res.IsSuccessStatusCode)
             {
                 game = res.Content;
+                _openGameRequestId = game.Id;
             }
         }
         StateHasChanged();
@@ -573,12 +696,18 @@
         }
     }
 
+    private void Rename(int ind, bool rename)
+    {
+        CurrentlyRenaming[ind] = rename;
+    }
+
     private async void AddNewRow(int ind)
     {
+        Rename(ind, false);
+
         Dictionary<string, List<int>> newGames = new Dictionary<string, List<int>>();
-        if (game.Games.ContainsKey(newPlayerName) || string.IsNullOrEmpty(newPlayerName))
+        if (game.Games.ContainsKey(NewPlayerNames[ind]) || string.IsNullOrEmpty(NewPlayerNames[ind]))
         {
-            newPlayerName = "";
             return;
         }
 
@@ -587,12 +716,11 @@
             string name = game.Games.ElementAt(i).Key;
             if (ind == i)
             {
-                name = newPlayerName;
+                name = NewPlayerNames[ind];
             }
             newGames.Add(name, game.Games.ElementAt(i).Value);
         }
         game.Games = newGames;
-        newPlayerName = "";
         var res = await GameClient.UpdateGame(game);
         game = (res).Content;
     }
